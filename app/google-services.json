@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "126376343499",
+    "project_id": "rustysosho",
+    "storage_bucket": "rustysosho.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126376343499:android:4c6bd4893cc4b52065e84e",
+        "android_client_info": {
+          "package_name": "dev.rustybite.rustysosho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126376343499-56oqmehp696f5q876m5ko5ddg3sc7a5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.rustybite.rustysosho",
+            "certificate_hash": "1aab059ad06c459062c3e73810e64a3c9554b20b"
+          }
+        },
+        {
+          "client_id": "126376343499-k10vdr0td6dk0c0dqqec577tqnbl37kc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd-lPqZA6VYXpC_TvDXJ8b1Z1YPP6OK-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126376343499-k10vdr0td6dk0c0dqqec577tqnbl37kc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
