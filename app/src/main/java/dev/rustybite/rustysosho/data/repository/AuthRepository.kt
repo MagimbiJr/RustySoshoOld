@@ -17,6 +17,9 @@ interface AuthRepository {
      */
     val signUpState: MutableStateFlow<AuthResponse>
 
+    val verificationOtp: String
+    val resentToken: PhoneAuthProvider.ForceResendingToken?
+
     /**
      * It call Firebase service to send SMS.
      */
