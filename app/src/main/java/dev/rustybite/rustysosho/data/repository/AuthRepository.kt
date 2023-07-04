@@ -23,7 +23,7 @@ interface AuthRepository {
     /**
      * It call Firebase service to send SMS.
      */
-    fun authenticate(phone: String)
+    suspend fun authenticate(phone: String)
 
     /**
      * Called when SMS is sent

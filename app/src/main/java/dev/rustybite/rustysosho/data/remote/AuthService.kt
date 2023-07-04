@@ -93,7 +93,7 @@ class AuthService(
         }
     }
 
-    fun authenticate(phone: String) {
+    suspend fun authenticate(phone: String) {
         signUpState.value = AuthResponse.Loading(
             loading = true
         )

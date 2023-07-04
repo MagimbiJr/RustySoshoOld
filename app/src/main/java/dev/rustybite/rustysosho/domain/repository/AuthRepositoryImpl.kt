@@ -18,7 +18,7 @@ class AuthRepositoryImpl(
     override val resentToken: PhoneAuthProvider.ForceResendingToken?
         get() = api.resentToken
 
-    override fun authenticate(phone: String) {
+    override suspend fun authenticate(phone: String) {
         api.authenticate(phone)
     }
 
