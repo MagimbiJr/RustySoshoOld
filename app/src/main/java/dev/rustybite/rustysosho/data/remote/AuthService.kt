@@ -8,96 +8,97 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import dev.rustybite.rustysosho.R
-import dev.rustybite.rustysosho.data.repository.AuthRepository
+import dev.rustybite.rustysosho.domain.model.Response
 import dev.rustybite.rustysosho.presentation.RustySoshoActivity
-import dev.rustybite.rustysosho.utils.AuthResponse
 import dev.rustybite.rustysosho.utils.Resource
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import java.util.concurrent.TimeUnit
 
 class AuthService(
     private val auth: FirebaseAuth,
     private val context: RustySoshoActivity,
-)  {
-    var signUpState: MutableStateFlow<AuthResponse> =
-        MutableStateFlow(AuthResponse.NotInitialize)
-        private set
+) {
+    var signUpState: Flow<Resource<Response>> = callbackFlow {
 
-    var verificationOtp = ""
+    }
+        //private set
+
+    val message = MutableStateFlow("")
+
+    var verificationOtp = MutableStateFlow("")
     var resentToken: PhoneAuthProvider.ForceResendingToken? = null
 
 
     private val authCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-            signUpState.value = AuthResponse.Success(
-                message = context.getString(R.string.verification_complete)
-            )
+            message.value = context.getString(R.string.verification_complete)
             signInWithCredential(credential)
         }
 
         override fun onVerificationFailed(exception: FirebaseException) {
-            when(exception) {
+            when (exception) {
                 is FirebaseAuthInvalidCredentialsException -> {
-                    signUpState.value = AuthResponse.Failure(
-                        exception = Exception(
-                            message = context.getString(R.string.verification_failed_try_again)
-                        )
-                    )
+                    message.value = context.getString(R.string.verification_failed_try_again)
                 }
+
                 is FirebaseTooManyRequestsException -> {
-                    signUpState.value = AuthResponse.Failure(
-                        exception = Exception(
-                            message = context.getString(R.string.quota_exceeded)
-                        )
-                    )
+                    message.value = context.getString(R.string.quota_exceeded)
                 }
+
                 else -> {
-                    signUpState.value = AuthResponse.Failure(exception)
+                    message.value = exception.localizedMessage
+                        ?: context.getString(R.string.unknown_error)
                 }
             }
         }
 
         override fun onCodeSent(code: String, token: PhoneAuthProvider.ForceResendingToken) {
             super.onCodeSent(code, token)
-            verificationOtp = code
+            verificationOtp.value = code
             resentToken = token
-            signUpState.value = AuthResponse.Success(
-                message = context.getString(R.string.code_sent)
-            )
-            signUpState.value = AuthResponse.Loading(loading = false)
+            message.value = context.getString(R.string.code_sent)
         }
 
     }
 
-    private val authBuilder = PhoneAuthOptions.newBuilder(auth)
-        .setCallbacks(authCallbacks)
-        .setActivity(context)
-        .setTimeout(120L, TimeUnit.SECONDS)
-
-    private fun signInWithCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential).addOnSuccessListener {
-            signUpState.value = AuthResponse.Success(
+    private fun signInWithCredential(credential: PhoneAuthCredential): Flow<Resource<out Response>> = callbackFlow {
+        val result = auth.signInWithCredential(credential).addOnSuccessListener {
+            val data = Response(
+                success = true,
                 message = context.getString(R.string.phone_auth_success)
             )
+            trySend(Resource.Success(data = data))
         }.addOnFailureListener { exception ->
             if (exception is FirebaseAuthInvalidCredentialsException) {
-                AuthResponse.Failure(
-                    exception = Exception(context.getString(R.string.invalid_code))
+                message.value = context.getString(R.string.invalid_code)
+                val response = Response(
+                    success = false,
+                    message = message.value
                 )
-                return@addOnFailureListener
+                trySend(Resource.Failure(message = response.message))
             } else {
-                signUpState.value = AuthResponse.Failure(exception = exception)
+                message.value = exception.localizedMessage
+                    ?: context.getString(R.string.unknown_error)
+                val response = Response(
+                    success = false,
+                    message = message.value
+                )
+                trySend(Resource.Failure(message = response.message))
             }
         }
+
+        awaitClose { result.isCanceled }
     }
 
     suspend fun authenticate(phone: String) {
-        signUpState.value = AuthResponse.Loading(
-            loading = true
-        )
-        val options = authBuilder
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setCallbacks(authCallbacks)
+            .setActivity(context)
+            .setTimeout(120L, TimeUnit.SECONDS)
             .setPhoneNumber(phone)
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
@@ -105,11 +106,10 @@ class AuthService(
 
     fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
         authCallbacks.onCodeSent(verificationId, token)
-
     }
 
-    fun onVerifyOtp(code: String) {
-        val credential = PhoneAuthProvider.getCredential(verificationOtp, code)
+    fun onVerifyOtp(code: String): Flow<Resource<out Response>> = callbackFlow {
+        val credential = PhoneAuthProvider.getCredential(verificationOtp.value, code)
         signInWithCredential(credential)
     }
 
@@ -121,7 +121,7 @@ class AuthService(
         authCallbacks.onVerificationFailed(exception as FirebaseException)
     }
 
-     fun getUserPhone(): String {
+    fun getUserPhone(): String {
         return auth.currentUser?.uid.orEmpty()
     }
 

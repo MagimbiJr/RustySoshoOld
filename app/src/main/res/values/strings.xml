@@ -1,10 +1,19 @@
 <resources>
     <string name="app_name">RustySosho</string>
-    <string name="verification_complete">Verification Complete</string>
+    <string name="verification_complete">Verification complete</string>
     <string name="verification_failed_try_again">Verification failed. Try again</string>
     <string name="quota_exceeded">Too many request. Try again after some time</string>
     <string name="code_sent">Code sent</string>
-    <string name="phone_auth_success">User authentacate successful</string>
+    <string name="phone_auth_success">User authenticate successful</string>
     <string name="invalid_code">Invalid code</string>
     <string name="code_will_be_sent">Code will be sent to</string>
+    <string name="unknown_error">Unknown error occurred</string>
+    <string name="code_not_sent">Code was not sent</string>
+    <string name="enter_phone_placeholder">Enter phone number</string>
+    <string name="back_button_content_description">Back button</string>
+    <string name="clear_search_button_content_description">Search button</string>
+    <string name="search_country_placeholder">Search country code</string>
+    <string name="verify_number">Verify number</string>
+    <string name="logo_content_description">Rusty Sosho logo\n</string>
+    <string name="lets_verify_text">Let\'s verify you first!</string>
 </resources>
