@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="rs_shape_unspecified">0dp</dimen>
+    <dimen name="rs_shape_extra_small">4dp</dimen>
+    <dimen name="rs_shape_small">8dp</dimen>
+    <dimen name="rs_shape_medium">12dp</dimen>
+    <dimen name="rs_shape_large">16dp</dimen>
+    <dimen name="rs_margin_extra_small">4dp</dimen>
+    <dimen name="rs_margin_small">8dp</dimen>
+    <dimen name="rs_margin_medium">12dp</dimen>
+    <dimen name="rs_margin_large">16dp</dimen>
+    <dimen name="rs_padding_extra_small">4dp</dimen>
+    <dimen name="rs_padding_small">8dp</dimen>
+    <dimen name="rs_padding_medium">12dp</dimen>
+    <dimen name="rs_padding_large">16dp</dimen>
+    <dimen name="rs_logo_size_large">300dp</dimen>
+    <dimen name="rs_otp_field_size">50dp</dimen>
+</resources>

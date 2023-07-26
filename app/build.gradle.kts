@@ -86,6 +86,9 @@ dependencies {
     //Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.23.1")
 
+    //implementation("com.hbb20:ccp:2.5.0")
+    implementation("com.hbb20:ccp:2.5.0")
+
     //Test
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
