@@ -3,9 +3,11 @@ package dev.rustybite.rustysosho.presentation.authentication
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.rustybite.rustysosho.R
 import dev.rustybite.rustysosho.data.repository.AuthRepository
 import dev.rustybite.rustysosho.utils.AppEvents
 import dev.rustybite.rustysosho.utils.Resource
+import dev.rustybite.rustysosho.utils.ResourceProvider
 import dev.rustybite.rustysosho.utils.codes
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,8 @@ import kotlinx.coroutines.launch
 class AuthViewModel(
     //private val authenticateUseCase: AuthenticateUseCase,
     //private val verifyTokenUseCase: VerifyTokenUseCase,
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val resProvider: ResourceProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -39,7 +42,6 @@ class AuthViewModel(
             otp = otp
         )
     }
-
     fun onCountryCodeChange(code: String) {
         _uiState.value = _uiState.value.copy(
             countryCode = code
@@ -57,16 +59,13 @@ class AuthViewModel(
                     }
                     "Verification failed. Try again" -> {
                         _uiState.value = _uiState.value.copy(errorMessage = message)
-                        Log.d("TAG", "kibibi: message is $message")
                     }
                     "Too many request. Try again after some time" -> {
                         _uiState.value = _uiState.value.copy(errorMessage = message)
-                        Log.d("TAG", "kibibi: message is $message")
                     }
                     "Code sent" -> {
-                        otp.collectLatest { otp ->
-                            _uiState.value = _uiState.value.copy(otp = otp)
-                            Log.d("TAG", "kibibi: otp is $otp")
+                        otp.collectLatest { _ ->
+                           // _uiState.value = _uiState.value.copy(otp = otp)
                             if (message.isNotBlank()) {
                                 _appEvents.send(AppEvents.Navigate("enter_code_screen"))
                             }
@@ -83,7 +82,31 @@ class AuthViewModel(
 
     fun onVerifyOtp(code: String) {
         viewModelScope.launch {
-            repository.onVerifyOtp(code)
+            _uiState.value = _uiState.value.copy(
+                loading = true
+            )
+            repository.onVerifyOtp(code).collectLatest { response ->
+                when(response) {
+                    is Resource.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                        _appEvents.send(AppEvents.ShowToast(response.data?.message ?: ""))
+                        _appEvents.send(AppEvents.Navigate("home"))
+                    }
+                    is Resource.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            errorMessage = response.message ?: resProvider.getString(R.string.unknown_error)
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -109,7 +132,7 @@ class AuthViewModel(
 
     fun onNavigateToHome() {
         viewModelScope.launch {
-            _appEvents.send(AppEvents.Navigate("home"))
+            _appEvents.send(AppEvents.Navigate("verify_number_screen"))
             _uiState.value = _uiState.value.copy(query = "")
         }
     }

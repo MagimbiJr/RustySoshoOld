@@ -14,4 +14,5 @@
     <dimen name="rs_padding_medium">12dp</dimen>
     <dimen name="rs_padding_large">16dp</dimen>
     <dimen name="rs_logo_size_large">300dp</dimen>
+    <dimen name="rs_otp_field_size">50dp</dimen>
 </resources>

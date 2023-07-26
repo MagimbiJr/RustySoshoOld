@@ -108,9 +108,9 @@ class AuthService(
         authCallbacks.onCodeSent(verificationId, token)
     }
 
-    fun onVerifyOtp(code: String): Flow<Resource<out Response>> = callbackFlow {
+    fun onVerifyOtp(code: String): Flow<Resource<out Response>>  {
         val credential = PhoneAuthProvider.getCredential(verificationOtp.value, code)
-        signInWithCredential(credential)
+        return signInWithCredential(credential)
     }
 
     fun onVerificationCompleted(credential: PhoneAuthCredential) {

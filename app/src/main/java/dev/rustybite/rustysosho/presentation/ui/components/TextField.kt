@@ -1,8 +1,16 @@
 package dev.rustybite.rustysosho.presentation.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -15,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -22,6 +31,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.rustybite.rustysosho.R
 
@@ -58,6 +68,54 @@ fun PhoneNumberField(
         maxLines = 1,
 
         )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RSOtpTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier,
+) {
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        decorationBox = @Composable {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(6) { index ->
+                    val char = when {
+                        index >= value.length -> ""
+                        else -> value[index].toString()
+                    }
+                    
+                    Text(
+                        text = char,
+                        modifier = modifier
+
+                            .width(40.dp)
+                            //.heightIn(50.dp)
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(.4f))
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(
+                                vertical = dimensionResource(id = R.dimen.rs_padding_medium)
+                            ),
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(modifier = modifier.width(dimensionResource(id = R.dimen.rs_margin_medium)))
+                }
+            }
+        }
+    )
 }
 
 

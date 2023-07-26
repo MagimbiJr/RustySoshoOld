@@ -26,7 +26,10 @@ class RustySoshoActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         rustySoshoActivity = this
         container = RustySoshoContainer()
-        authViewModel = AuthViewModel(container!!.authRepository)
+        authViewModel = AuthViewModel(
+            container!!.authRepository,
+            container!!.resProvider
+        )
         setContent {
             val navHostController = rememberNavController()
             RustySoshoTheme {
