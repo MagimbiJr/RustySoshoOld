@@ -15,7 +15,7 @@ import dev.rustybite.rustysosho.presentation.ui.theme.RustySoshoTheme
 
 class RustySoshoActivity : ComponentActivity() {
     private var container: RustySoshoContainer? = null
-    lateinit var authViewModel: AuthViewModel
+    private lateinit var authViewModel: AuthViewModel
 
     companion object {
         var rustySoshoActivity: RustySoshoActivity? = null

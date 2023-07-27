@@ -18,4 +18,5 @@
     <string name="lets_verify_text">Let\'s verify you first!</string>
     <string name="enter_otp_text">Please enter code sent</string>
     <string name="verify_otp">Verify Otp</string>
+    <string name="user_registered_successful">User registered successful</string>
 </resources>
