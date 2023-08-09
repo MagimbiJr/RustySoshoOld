@@ -4,6 +4,8 @@ import dev.rustybite.rustysosho.utils.CountryCode
 
 data class AuthUiState(
     val loading: Boolean = false,
+    val isUserStored: Boolean = false,
+    val userId: String? = null,
     val errorMessage: String = "",
     val successMessage: String = "",
     val phoneNumber: String = "",

@@ -18,4 +18,20 @@
     <string name="lets_verify_text">Let\'s verify you first!</string>
     <string name="enter_otp_text">Please enter code sent</string>
     <string name="verify_otp">Verify Otp</string>
+    <string name="user_registered_successful">User registered successful</string>
+    <string name="enter_name_placeholder">Enter name</string>
+    <string name="enter_username_placeholder">Enter username</string>
+    <string name="select_birth_date">Select birth date</string>
+    <string name="seletc_gender_label">Select your gender</string>
+    <string name="register_user">Register</string>
+    <string name="positive_dialog_btn">OK</string>
+    <string name="negative_dialog_btn">Cancel</string>
+    <string name="no_user_icon_content_description">No user photo icon</string>
+    <string name="add_icon_content_description">"Add icon "</string>
+    <string name="upload_camera_photo">Upload camera photo</string>
+    <string name="upload_gallery_photo">Upload gallery photo</string>
+    <string name="remove_photo">Remove photo</string>
+    <string name="change_lens_icon">Change lens icon</string>
+    <string name="image_profile_to_be_uploaded">Profile image to be uploaded</string>
+    <string name="phone_number_used">Phone number is already used</string>
 </resources>

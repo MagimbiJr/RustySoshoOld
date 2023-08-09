@@ -86,8 +86,17 @@ dependencies {
     //Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.23.1")
 
-    //implementation("com.hbb20:ccp:2.5.0")
-    implementation("com.hbb20:ccp:2.5.0")
+    //CameraX
+    implementation("androidx.camera:camera-camera2:1.2.3")
+    implementation("androidx.camera:camera-lifecycle:1.2.3")
+    implementation("androidx.camera:camera-view:1.2.3")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+
+    //Compose Material Dialogs
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
     //Test
     testImplementation("junit:junit:4.13.2")

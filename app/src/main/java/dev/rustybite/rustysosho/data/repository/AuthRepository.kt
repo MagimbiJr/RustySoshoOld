@@ -3,7 +3,6 @@ package dev.rustybite.rustysosho.data.repository
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import dev.rustybite.rustysosho.domain.model.Response
-import dev.rustybite.rustysosho.utils.AuthResponse
 import dev.rustybite.rustysosho.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +49,8 @@ interface AuthRepository {
      * Will be called when exception occurred
      */
     fun onVerificationFailed(exception: Exception)
-    fun getUserPhone(): String
+    fun getUserId(): Flow<String?>
+
+    fun isUserStored(): Flow<Boolean>
 
 }

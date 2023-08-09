@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import dev.rustybite.rustysosho.R
 import dev.rustybite.rustysosho.domain.model.Response
 import dev.rustybite.rustysosho.presentation.RustySoshoActivity
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit
 
 class AuthService(
     private val auth: FirebaseAuth,
+    private val database: FirebaseFirestore,
     private val context: RustySoshoActivity,
 ) {
     var signUpState: Flow<Resource<Response>> = callbackFlow {
@@ -121,9 +123,24 @@ class AuthService(
         authCallbacks.onVerificationFailed(exception as FirebaseException)
     }
 
-    fun getUserPhone(): String {
-        return auth.currentUser?.uid.orEmpty()
+    fun getUserId(): Flow<String?> = flow {
+        if (auth.currentUser != null) {
+            emit(auth.currentUser?.uid)
+        } else {
+            emit(null)
+        }
     }
 
-
+    fun isUserStored(): Flow<Boolean> = callbackFlow {
+        val phoneNumber = auth.currentUser?.phoneNumber ?: ""
+        val usersRef = database.collection("users")
+        val snapshotResult = usersRef.whereEqualTo("phoneNumber", phoneNumber).get().addOnSuccessListener { querySnapshot ->
+            if (querySnapshot.documents.isEmpty()) {
+                trySend(false)
+            } else {
+                trySend(true)
+            }
+        }
+        awaitClose { snapshotResult.isCanceled }
+    }
 }
