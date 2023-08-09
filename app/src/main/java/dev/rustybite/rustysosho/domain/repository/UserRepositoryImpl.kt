@@ -11,12 +11,12 @@ class UserRepositoryImpl(
     private val api: UserService
 ) : UserRepository {
     override suspend fun registerUser(
-        firstName: String,
-        lastName: String,
-        phoneNumber: String,
+        name: String,
         username: String?,
-        uri: Uri?
+        uri: Uri?,
+        gender: String,
+        birthDate: String
     ): Flow<Resource<out Response>> {
-        return api.createUser(firstName, lastName, phoneNumber, username, uri)
+        return api.createUser(name, username, uri, birthDate, gender)
     }
 }

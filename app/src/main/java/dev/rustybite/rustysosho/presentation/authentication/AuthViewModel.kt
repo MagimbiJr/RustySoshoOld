@@ -22,14 +22,32 @@ class AuthViewModel(
     private val repository: AuthRepository,
     private val resProvider: ResourceProvider
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState = _uiState.asStateFlow()
     private val _appEvents = Channel<AppEvents>()
     val appEvents = _appEvents.receiveAsFlow()
+
     //private val signUpState = repository.signUpState
     private val message = repository.message
     private val otp = repository.verificationOtp
+    var isUserStored: Boolean = false
+    //private val route = if (isUserStored) "home" else "register_user"
+
+    init {
+        viewModelScope.launch {
+            repository.getUserId().collectLatest { userId ->
+                _uiState.value = _uiState.value.copy(userId = userId)
+            }
+        }
+    }
+    init {
+        viewModelScope.launch {
+            repository.isUserStored().collectLatest { isUserStored ->
+                _uiState.value = _uiState.value.copy(isUserStored = isUserStored)
+                Log.d("TaNa", "isStored in init: $isUserStored")
+            }
+        }
+    }
 
     fun onPhoneNumberChange(phoneNumber: String) {
         _uiState.value = _uiState.value.copy(
@@ -42,36 +60,42 @@ class AuthViewModel(
             otp = otp
         )
     }
+
     fun onCountryCodeChange(code: String) {
         _uiState.value = _uiState.value.copy(
             countryCode = code
         )
     }
 
+    val route = if (_uiState.value.isUserStored) "home" else "register_user"
     fun authenticate(phoneNumber: String) {
         viewModelScope.launch {
             repository.authenticate(phoneNumber)
             message.collectLatest { message ->
                 _uiState.value = _uiState.value.copy(loading = message.isBlank())
-                when(message) {
+                when (message) {
                     "Verification complete" -> {
-                        _appEvents.send(AppEvents.Navigate("home_screen"))
+                        _appEvents.send(AppEvents.Navigate("home"))
                     }
+
                     "Verification failed. Try again" -> {
                         _uiState.value = _uiState.value.copy(errorMessage = message)
                     }
+
                     "Too many request. Try again after some time" -> {
                         _uiState.value = _uiState.value.copy(errorMessage = message)
                     }
+
                     "Code sent" -> {
                         otp.collectLatest { _ ->
-                           // _uiState.value = _uiState.value.copy(otp = otp)
+                            // _uiState.value = _uiState.value.copy(otp = otp)
                             if (message.isNotBlank()) {
                                 _appEvents.send(AppEvents.Navigate("enter_code_screen"))
                             }
                         }
 
                     }
+
                     else -> {
                         _uiState.value = _uiState.value.copy(errorMessage = message)
                     }
@@ -86,7 +110,7 @@ class AuthViewModel(
                 loading = true
             )
             repository.onVerifyOtp(code).collectLatest { response ->
-                when(response) {
+                when (response) {
                     is Resource.Success -> {
                         _uiState.value = _uiState.value.copy(
                             loading = false
@@ -94,12 +118,15 @@ class AuthViewModel(
                         _appEvents.send(AppEvents.ShowToast(response.data?.message ?: ""))
                         _appEvents.send(AppEvents.Navigate("home"))
                     }
+
                     is Resource.Failure -> {
                         _uiState.value = _uiState.value.copy(
                             loading = false,
-                            errorMessage = response.message ?: resProvider.getString(R.string.unknown_error)
+                            errorMessage = response.message
+                                ?: resProvider.getString(R.string.unknown_error)
                         )
                     }
+
                     is Resource.Loading -> {
                         _uiState.value = _uiState.value.copy(
                             loading = true

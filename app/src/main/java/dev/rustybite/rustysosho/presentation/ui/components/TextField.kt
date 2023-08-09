@@ -70,6 +70,42 @@ fun PhoneNumberField(
         )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RSTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier,
+    placeholder: String,
+    enabled: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+) {
+    val colors = TextFieldDefaults.textFieldColors(
+        cursorColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(.4f),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent
+    )
+
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        placeholder = {
+            Text(text = placeholder)
+        },
+        enabled = enabled,
+        colors = colors,
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 50.dp)
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.rs_shape_extra_small))),
+        maxLines = 1,
+    )
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +129,7 @@ fun RSOtpTextField(
                         index >= value.length -> ""
                         else -> value[index].toString()
                     }
-                    
+
                     Text(
                         text = char,
                         modifier = modifier

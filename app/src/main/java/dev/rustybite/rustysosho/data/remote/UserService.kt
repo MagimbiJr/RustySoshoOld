@@ -2,6 +2,7 @@ package dev.rustybite.rustysosho.data.remote
 
 import android.net.Uri
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
@@ -17,21 +18,23 @@ import kotlinx.coroutines.flow.callbackFlow
 class UserService(
     private val database: FirebaseFirestore,
     private val storage: FirebaseStorage,
+    private val auth: FirebaseAuth,
     private val resProvider: ResourceProvider
 ) {
     private val usersRef = database.collection("users")
     private val storageRef = storage.reference.child("images")
 
     suspend fun createUser(
-        firstName: String,
-        lastName: String,
-        phoneNumber: String,
+        name: String,
         username: String? = null,
         uri: Uri? = null,
+        gender: String,
+        birthDate: String
     ): Flow<Resource<out Response>> = callbackFlow {
         var storageResultSnapshot: StorageTask<UploadTask.TaskSnapshot>? = null
         var usersResultSnapshot: Task<Void>? = null
-        usersRef.whereEqualTo("phoneNumber", phoneNumber).get().addOnSuccessListener { querySnapshot ->
+        val number = auth.currentUser?.phoneNumber ?: ""
+        usersRef.whereEqualTo("phoneNumber", number).get().addOnSuccessListener { querySnapshot ->
             if (querySnapshot.documents.isEmpty()) {
                 if (uri !=  null) {
                     val valuedUserName = username ?: ""
@@ -40,13 +43,14 @@ class UserService(
                             if (uploadTask.isComplete) {
                                 storageRef.downloadUrl.addOnSuccessListener { downloadedUri ->
                                     val user = hashMapOf(
-                                        "firstName" to firstName,
-                                        "lastName" to lastName,
-                                        "phoneNumber" to phoneNumber,
+                                        "name" to name,
+                                        "phoneNumber" to number,
                                         "username" to valuedUserName,
+                                        "birthDate" to birthDate,
+                                        "gender" to gender,
                                         "userImage" to downloadedUri.toString()
                                     )
-                                    usersRef.document().set(user).addOnSuccessListener {
+                                    usersRef.document(auth.currentUser?.uid.toString()).set(user).addOnSuccessListener {
                                         val data = Response(
                                             success = true,
                                             message = resProvider.getString(R.string.user_registered_successful)
@@ -66,13 +70,14 @@ class UserService(
                 } else {
                     val valuedUserName = username ?: ""
                     val user = hashMapOf(
-                        "firstName" to firstName,
-                        "lastName" to lastName,
-                        "phoneNumber" to phoneNumber,
+                        "name" to name,
+                        "phoneNumber" to number,
                         "username" to valuedUserName,
+                        "birthDate" to  birthDate,
+                        "gender" to gender,
                         "userImage" to ""
                     )
-                    usersResultSnapshot = usersRef.document().set(user).addOnSuccessListener {
+                    usersResultSnapshot = usersRef.document(auth.currentUser?.uid.toString()).set(user).addOnSuccessListener {
                         val data = Response(
                             success = true,
                             message = resProvider.getString(R.string.user_registered_successful)
@@ -86,6 +91,12 @@ class UserService(
                         )
                     }
                 }
+            } else {
+                trySend(
+                    Resource.Failure(
+                        message = resProvider.getString(R.string.phone_number_used)
+                    )
+                )
             }
         }.addOnFailureListener { exception ->
             trySend(

@@ -42,7 +42,11 @@ class AuthRepositoryImpl(
         api.onVerificationFailed(exception)
     }
 
-    override fun getUserPhone(): String {
-       return api.getUserPhone()
+    override fun getUserId(): Flow<String?> {
+       return api.getUserId()
+    }
+
+    override fun isUserStored(): Flow<Boolean> {
+        return api.isUserStored()
     }
 }

@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     suspend fun registerUser(
-        firstName: String,
-        lastName: String,
-        phoneNumber: String,
+        name: String,
         username: String? = null,
         uri: Uri? = null,
+        gender: String,
+        birthDate: String
     ): Flow<Resource<out Response>>
 }
