@@ -25,4 +25,5 @@
     <dimen name="rs_icon_size_medium">84dp</dimen>
     <dimen name="add_icon_x_offset">-4dp</dimen>
     <dimen name="rs_profile_to_upload_size">160dp</dimen>
+    <dimen name="rs_padding_none">0dp</dimen>
 </resources>

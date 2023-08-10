@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.rustybite.rustysosho.R
 import dev.rustybite.rustysosho.di.RustySoshoContainer
 import dev.rustybite.rustysosho.presentation.authentication.AuthViewModel
+import dev.rustybite.rustysosho.presentation.home_screen.HomeViewModel
 import dev.rustybite.rustysosho.presentation.navigation.RustySoshoNavHost
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserViewModel
 import dev.rustybite.rustysosho.presentation.ui.theme.RustySoshoTheme
@@ -40,6 +41,7 @@ class RustySoshoActivity : ComponentActivity() {
     private lateinit var userRegViewModel: RegisterUserViewModel
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var homeViewModel: HomeViewModel
 
     companion object {
         var rustySoshoActivity: RustySoshoActivity? = null
@@ -60,6 +62,7 @@ class RustySoshoActivity : ComponentActivity() {
             container!!.userRepository,
             container!!.resProvider
         )
+        homeViewModel = HomeViewModel()
         setContent {
             val navHostController = rememberNavController()
             RustySoshoTheme {
@@ -76,7 +79,8 @@ class RustySoshoActivity : ComponentActivity() {
                         isPermissionGranted = isPermissionGranted,
                         requestPermissionLauncher = requestPermissionLauncher,
                         outputDirectory = outputDirectory,
-                        executor = cameraExecutor
+                        executor = cameraExecutor,
+                        homeViewModel = homeViewModel
                     )
                 }
             }

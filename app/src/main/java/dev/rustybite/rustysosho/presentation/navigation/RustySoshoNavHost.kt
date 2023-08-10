@@ -31,6 +31,8 @@ import dev.rustybite.rustysosho.presentation.authentication.SearchCountryCodeScr
 import dev.rustybite.rustysosho.presentation.authentication.SelectCountryCodeScreen
 import dev.rustybite.rustysosho.presentation.authentication.EnterNumberScreen
 import dev.rustybite.rustysosho.presentation.authentication.VerifyOtpScreen
+import dev.rustybite.rustysosho.presentation.home_screen.HomeScreen
+import dev.rustybite.rustysosho.presentation.home_screen.HomeViewModel
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserScreen
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserViewModel
 import java.io.File
@@ -48,7 +50,8 @@ fun RustySoshoNavHost(
     shouldShowCamera: MutableState<Boolean>,
     isPermissionGranted: MutableState<Boolean>,
     requestPermissionLauncher: ActivityResultLauncher<String>,
-    userRegViewModel: RegisterUserViewModel
+    userRegViewModel: RegisterUserViewModel,
+    homeViewModel: HomeViewModel
 ) {
     val uiState = authViewModel.uiState.collectAsState().value
     val systemUiController = rememberSystemUiController()
@@ -81,7 +84,10 @@ fun RustySoshoNavHost(
                 .padding(paddingValues)
         ) {
             composable(home.route) {
-
+                HomeScreen(
+                    onNavigate = { navHostController.navigate("add_post_screen")},
+                    viewModel = homeViewModel
+                )
             }
             composable("register_user") {
                 RegisterUserScreen(
@@ -152,6 +158,9 @@ fun RustySoshoNavHost(
                     systemUiController = systemUiController,
                     scrollState = scrollState
                 )
+            }
+            composable("add_post_screen") {
+                Text(text = "Add post")
             }
         }
     }

@@ -37,4 +37,6 @@
     <string name="home_screen_name">Home</string>
     <string name="charts_screen_name">Charts</string>
     <string name="profile_screen_name">Profile</string>
+    <string name="fab_icon_content_description">Floating action button</string>
+    <string name="create">Create</string>
 </resources>
