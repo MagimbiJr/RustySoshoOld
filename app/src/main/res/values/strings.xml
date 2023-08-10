@@ -34,4 +34,7 @@
     <string name="change_lens_icon">Change lens icon</string>
     <string name="image_profile_to_be_uploaded">Profile image to be uploaded</string>
     <string name="phone_number_used">Phone number is already used</string>
+    <string name="home_screen_name">Home</string>
+    <string name="charts_screen_name">Charts</string>
+    <string name="profile_screen_name">Profile</string>
 </resources>
