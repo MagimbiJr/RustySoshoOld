@@ -1,23 +1,16 @@
 package dev.rustybite.rustysosho.presentation
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
 import dev.rustybite.rustysosho.R
 import dev.rustybite.rustysosho.di.RustySoshoContainer
@@ -25,7 +18,6 @@ import dev.rustybite.rustysosho.presentation.authentication.AuthViewModel
 import dev.rustybite.rustysosho.presentation.navigation.RustySoshoNavHost
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserViewModel
 import dev.rustybite.rustysosho.presentation.ui.theme.RustySoshoTheme
-import dev.rustybite.rustysosho.presentation.ui_utils.requestCameraPermission
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

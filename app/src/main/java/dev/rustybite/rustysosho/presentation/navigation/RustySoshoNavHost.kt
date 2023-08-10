@@ -17,6 +17,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -24,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import dev.rustybite.rustysosho.R
 import dev.rustybite.rustysosho.presentation.authentication.AuthViewModel
 import dev.rustybite.rustysosho.presentation.authentication.SearchCountryCodeScreen
 import dev.rustybite.rustysosho.presentation.authentication.SelectCountryCodeScreen
@@ -52,30 +54,34 @@ fun RustySoshoNavHost(
     val systemUiController = rememberSystemUiController()
     val scrollState = rememberScrollState()
     val auth = FirebaseAuth.getInstance()
+    val home = BottomNavScreen.Home(stringResource(id = R.string.home_screen_name))
+    val charts = BottomNavScreen.Charts(stringResource(id = R.string.charts_screen_name))
+    val profile = BottomNavScreen.Profile(stringResource(id = R.string.profile_screen_name))
     val startDestination = when {
-        uiState.userId != null && uiState.isUserStored -> "home"
+        uiState.userId != null && uiState.isUserStored -> home.route
         !uiState.isUserStored && uiState.userId != null -> "register_user"
         else -> "verify_number_screen"
     }
-    Scaffold { paddingValues ->
-        //Log.d("TaNa", "RustySoshoNavHost: user id is ${auth.currentUser?.uid}")
-        //Log.d("TaNa", "RustySoshoNavHost: is store ${authViewModel.isUserStored}")
+    val navItems = listOf(
+        home,
+        charts,
+        profile
+    )
+
+
+    Scaffold(
+        bottomBar = {
+            RSBottomNav(navItems = navItems, navHostController = navHostController, modifier = modifier)
+        }
+    ) { paddingValues ->
         NavHost(
             navController = navHostController,
             startDestination = startDestination,
             modifier = modifier
                 .padding(paddingValues)
         ) {
-            composable("home") {
-                Column(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "Welcome home user")
-                }
+            composable(home.route) {
+
             }
             composable("register_user") {
                 RegisterUserScreen(
