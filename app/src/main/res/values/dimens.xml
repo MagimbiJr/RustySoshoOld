@@ -14,6 +14,7 @@
     <dimen name="rs_padding_small">8dp</dimen>
     <dimen name="rs_padding_medium">12dp</dimen>
     <dimen name="rs_padding_large">16dp</dimen>
+    <dimen name="rs_padding_larger">24dp</dimen>
     <dimen name="rs_logo_size_large">300dp</dimen>
     <dimen name="rs_logo_size_medium">200dp</dimen>
     <dimen name="rs_logo_size_small">100dp</dimen>
