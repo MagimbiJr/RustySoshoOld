@@ -11,7 +11,8 @@ data class Post(
     val userId: String = "",
     val postedAt: Long = System.currentTimeMillis(),
     val isLiked: Boolean = false,
-    val likes: Long = 0
+    val likes: Long = 0,
+    val privacyStatus: String = ""
 )
 
 fun DocumentSnapshot.toPost(): Post? {
@@ -23,7 +24,8 @@ fun DocumentSnapshot.toPost(): Post? {
             userId = getString("userId")!!,
             postedAt = getLong("postedAt")!!,
             isLiked = getBoolean("isLiked")!!,
-            likes = getLong("likes")!!
+            likes = getLong("likes")!!,
+            privacyStatus = getString("privacyStatus")!!
         )
     } catch (e: FirebaseFirestoreException) {
         null

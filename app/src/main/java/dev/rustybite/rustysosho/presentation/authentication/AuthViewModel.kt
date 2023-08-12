@@ -75,7 +75,7 @@ class AuthViewModel(
                 _uiState.value = _uiState.value.copy(loading = message.isBlank())
                 when (message) {
                     "Verification complete" -> {
-                        _appEvents.send(AppEvents.Navigate("home"))
+                        _appEvents.send(AppEvents.Navigate(route))
                     }
 
                     "Verification failed. Try again" -> {
@@ -116,7 +116,7 @@ class AuthViewModel(
                             loading = false
                         )
                         _appEvents.send(AppEvents.ShowToast(response.data?.message ?: ""))
-                        _appEvents.send(AppEvents.Navigate("home"))
+                        _appEvents.send(AppEvents.Navigate(route))
                     }
 
                     is Resource.Failure -> {

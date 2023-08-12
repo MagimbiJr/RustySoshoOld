@@ -4,8 +4,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dev.rustybite.rustysosho.data.remote.AuthService
+import dev.rustybite.rustysosho.data.remote.PostsService
 import dev.rustybite.rustysosho.data.remote.UserService
 import dev.rustybite.rustysosho.domain.repository.AuthRepositoryImpl
+import dev.rustybite.rustysosho.domain.repository.PostsRepositoryImpl
 import dev.rustybite.rustysosho.domain.repository.UserRepositoryImpl
 import dev.rustybite.rustysosho.presentation.RustySoshoActivity
 import dev.rustybite.rustysosho.utils.ResourceProvider
@@ -20,7 +22,9 @@ class RustySoshoContainer(
     private fun rustySoshoActivity(): RustySoshoActivity = RustySoshoActivity.getInstance() as RustySoshoActivity
     private val authService = AuthService(auth, database, rustySoshoActivity())
     private val userService = UserService(database, storage, auth, resProvider,)
+    private val postsService = PostsService(database, storage, auth, rustySoshoActivity())
 
     val authRepository = AuthRepositoryImpl(authService)
     val userRepository = UserRepositoryImpl(userService)
+    val postsRepository = PostsRepositoryImpl(postsService)
 }

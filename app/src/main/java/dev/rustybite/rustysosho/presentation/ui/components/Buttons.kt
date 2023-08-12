@@ -34,6 +34,7 @@ fun RSPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean,
+    fraction: Float = .5f,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary
 ) {
@@ -45,7 +46,7 @@ fun RSPrimaryButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(.5f),
+            .fillMaxWidth(fraction),
         enabled = enabled,
         colors = colors
     ) {
