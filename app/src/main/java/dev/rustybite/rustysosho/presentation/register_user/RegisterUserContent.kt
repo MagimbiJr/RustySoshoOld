@@ -351,7 +351,7 @@ fun RSImageView(
 private fun ImageView(uri: Uri, onClick: () -> Unit, modifier: Modifier) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current).data(uri.toString()).build(),
-        contentDescription = stringResource(id = R.string.image_profile_to_be_uploaded),
+        contentDescription = stringResource(id = R.string.image_to_be_uploaded),
         modifier = modifier
             .size(dimensionResource(id = R.dimen.rs_profile_to_upload_size))
             .clip(CircleShape)

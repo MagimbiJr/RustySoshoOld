@@ -198,5 +198,40 @@ fun RSSearchBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RSNoStyleTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier,
+    placeholder: String,
+    enabled: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+) {
+    val colors = TextFieldDefaults.textFieldColors(
+        cursorColor = MaterialTheme.colorScheme.primary,
+        containerColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent
+    )
+
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        placeholder = {
+            Text(text = placeholder)
+        },
+        enabled = enabled,
+        colors = colors,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.rs_shape_extra_small))),
+        maxLines = 1,
+    )
+}
+
 
 

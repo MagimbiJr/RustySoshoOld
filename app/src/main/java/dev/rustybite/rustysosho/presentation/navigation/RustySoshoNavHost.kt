@@ -15,6 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,14 +27,19 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 import dev.rustybite.rustysosho.R
+import dev.rustybite.rustysosho.presentation.add_post_screen.AddPostScreen
+import dev.rustybite.rustysosho.presentation.add_post_screen.AddPostViewModal
 import dev.rustybite.rustysosho.presentation.authentication.AuthViewModel
 import dev.rustybite.rustysosho.presentation.authentication.SearchCountryCodeScreen
 import dev.rustybite.rustysosho.presentation.authentication.SelectCountryCodeScreen
 import dev.rustybite.rustysosho.presentation.authentication.EnterNumberScreen
 import dev.rustybite.rustysosho.presentation.authentication.VerifyOtpScreen
+import dev.rustybite.rustysosho.presentation.home_screen.HomeScreen
+import dev.rustybite.rustysosho.presentation.home_screen.HomeViewModel
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserScreen
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserViewModel
 import java.io.File
@@ -48,8 +57,13 @@ fun RustySoshoNavHost(
     shouldShowCamera: MutableState<Boolean>,
     isPermissionGranted: MutableState<Boolean>,
     requestPermissionLauncher: ActivityResultLauncher<String>,
-    userRegViewModel: RegisterUserViewModel
+    userRegViewModel: RegisterUserViewModel,
+    homeViewModel: HomeViewModel,
+    addPostViewModal: AddPostViewModal
 ) {
+    val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     val uiState = authViewModel.uiState.collectAsState().value
     val systemUiController = rememberSystemUiController()
     val scrollState = rememberScrollState()
@@ -58,10 +72,12 @@ fun RustySoshoNavHost(
     val charts = BottomNavScreen.Charts(stringResource(id = R.string.charts_screen_name))
     val profile = BottomNavScreen.Profile(stringResource(id = R.string.profile_screen_name))
     val startDestination = when {
-        uiState.userId != null && uiState.isUserStored -> home.route
-        !uiState.isUserStored && uiState.userId != null -> "register_user"
+        //uiState.userId != null &&
+                uiState.isUserStored -> home.route
+        //!uiState.isUserStored  -> "register_user"
         else -> "verify_number_screen"
     }
+    var showBottomNav by remember { mutableStateOf(false) }
     val navItems = listOf(
         home,
         charts,
@@ -71,7 +87,22 @@ fun RustySoshoNavHost(
 
     Scaffold(
         bottomBar = {
-            RSBottomNav(navItems = navItems, navHostController = navHostController, modifier = modifier)
+            if (startDestination.contains(home.route)) {
+                RSBottomNav(
+                    navItems = navItems,
+                    onClick = { route ->
+                        navHostController.navigate(route) {
+                            popUpTo(navHostController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    currentRoute = currentRoute,
+                    modifier = modifier
+                )
+            }
         }
     ) { paddingValues ->
         NavHost(
@@ -81,8 +112,13 @@ fun RustySoshoNavHost(
                 .padding(paddingValues)
         ) {
             composable(home.route) {
-
+                HomeScreen(
+                    onNavigate = { navHostController.navigate("add_post_screen") },
+                    viewModel = homeViewModel
+                )
             }
+            composable(charts.route) {}
+            composable(profile.route) {}
             composable("register_user") {
                 RegisterUserScreen(
                     systemUiController = systemUiController,
@@ -151,6 +187,13 @@ fun RustySoshoNavHost(
                     viewModel = authViewModel,
                     systemUiController = systemUiController,
                     scrollState = scrollState
+                )
+            }
+            composable("add_post_screen") {
+                AddPostScreen(
+                    viewModal = addPostViewModal,
+                    onPopBack = { navHostController.popBackStack() },
+                    systemUiController = systemUiController
                 )
             }
         }
