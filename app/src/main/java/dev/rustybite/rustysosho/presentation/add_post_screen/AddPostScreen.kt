@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,8 +17,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +46,7 @@ fun AddPostScreen(
     val uiState = viewModal.uiState.collectAsState().value
     val appEvents = viewModal.appEvents
     val context = LocalContext.current
+    val focusRequester = remember { mutableStateOf(FocusRequester()) }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -109,7 +117,7 @@ fun AddPostScreen(
                 },
                 backgroundColor = MaterialTheme.colorScheme.surfaceVariant
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -127,7 +135,11 @@ fun AddPostScreen(
                     )
                 },
                 modifier = modifier,
-                context = context
+                context = context,
+                onScreenClicked = {
+                    focusRequester.value.requestFocus()
+                },
+                focusRequester = focusRequester
             )
         }
     }

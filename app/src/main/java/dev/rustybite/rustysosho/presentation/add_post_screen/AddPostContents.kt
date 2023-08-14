@@ -6,6 +6,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +24,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -42,12 +46,15 @@ fun AddPostContents(
     onPostImageChange: (String) -> Unit,
     onPostClick: () -> Unit,
     modifier: Modifier,
-    context: Context
+    context: Context,
+    onScreenClicked: () -> Unit,
+    focusRequester: MutableState<FocusRequester>
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = dimensionResource(id = R.dimen.rs_padding_medium)),
+            .padding(horizontal = dimensionResource(id = R.dimen.rs_padding_medium))
+            .clickable { onScreenClicked() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -72,7 +79,8 @@ fun AddPostContents(
                 placeholder = stringResource(id = R.string.say_something),
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences
-                )
+                ),
+                focusRequester = focusRequester
             )
         }
         AnimatedVisibility(visible = uiState.uri != null) {

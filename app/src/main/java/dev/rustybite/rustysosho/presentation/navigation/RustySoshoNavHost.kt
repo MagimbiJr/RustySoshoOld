@@ -1,28 +1,20 @@
 package dev.rustybite.rustysosho.presentation.navigation
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,14 +26,15 @@ import dev.rustybite.rustysosho.R
 import dev.rustybite.rustysosho.presentation.add_post_screen.AddPostScreen
 import dev.rustybite.rustysosho.presentation.add_post_screen.AddPostViewModal
 import dev.rustybite.rustysosho.presentation.authentication.AuthViewModel
+import dev.rustybite.rustysosho.presentation.authentication.EnterNumberScreen
 import dev.rustybite.rustysosho.presentation.authentication.SearchCountryCodeScreen
 import dev.rustybite.rustysosho.presentation.authentication.SelectCountryCodeScreen
-import dev.rustybite.rustysosho.presentation.authentication.EnterNumberScreen
 import dev.rustybite.rustysosho.presentation.authentication.VerifyOtpScreen
 import dev.rustybite.rustysosho.presentation.home_screen.HomeScreen
 import dev.rustybite.rustysosho.presentation.home_screen.HomeViewModel
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserScreen
 import dev.rustybite.rustysosho.presentation.register_user.RegisterUserViewModel
+import dev.rustybite.rustysosho.presentation.ui.components.RSBottomNav
 import java.io.File
 import java.util.concurrent.Executor
 
@@ -71,23 +64,24 @@ fun RustySoshoNavHost(
     val home = BottomNavScreen.Home(stringResource(id = R.string.home_screen_name))
     val charts = BottomNavScreen.Charts(stringResource(id = R.string.charts_screen_name))
     val profile = BottomNavScreen.Profile(stringResource(id = R.string.profile_screen_name))
+    val discover = BottomNavScreen.Discover(stringResource(id = R.string.discover))
     val startDestination = when {
         //uiState.userId != null &&
                 uiState.isUserStored -> home.route
         //!uiState.isUserStored  -> "register_user"
         else -> "verify_number_screen"
     }
-    var showBottomNav by remember { mutableStateOf(false) }
+    var showBottomNav = remember { mutableStateOf(true) }
     val navItems = listOf(
         home,
         charts,
+        discover,
         profile
     )
 
-
     Scaffold(
         bottomBar = {
-            if (startDestination.contains(home.route)) {
+            if (startDestination.contains(home.route) || !showBottomNav.value) {
                 RSBottomNav(
                     navItems = navItems,
                     onClick = { route ->
@@ -114,10 +108,13 @@ fun RustySoshoNavHost(
             composable(home.route) {
                 HomeScreen(
                     onNavigate = { navHostController.navigate("add_post_screen") },
-                    viewModel = homeViewModel
+                    viewModel = homeViewModel,
+                    systemUiController = systemUiController,
+                    showBottomNav = showBottomNav
                 )
             }
             composable(charts.route) {}
+            composable(discover.route) {}
             composable(profile.route) {}
             composable("register_user") {
                 RegisterUserScreen(
