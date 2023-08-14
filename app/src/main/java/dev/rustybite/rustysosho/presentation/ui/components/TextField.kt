@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -205,6 +206,7 @@ fun RSNoStyleTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier,
     placeholder: String,
+    focusRequester: MutableState<FocusRequester>,
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -228,7 +230,8 @@ fun RSNoStyleTextField(
         colors = colors,
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.rs_shape_extra_small))),
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.rs_shape_extra_small)))
+            .focusRequester(focusRequester.value),
         maxLines = 1,
     )
 }
